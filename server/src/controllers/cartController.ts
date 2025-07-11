@@ -1,4 +1,9 @@
 import { Request, Response } from 'express';
+import { IUser } from '../models/User';
+
+interface AuthRequest extends Request {
+  user?: IUser;
+}
 import { Cart } from '../models/Cart';
 import { Product } from '../models/Product';
 import { AppError } from '../utils/errorHandler';
@@ -7,7 +12,7 @@ import asyncHandler from 'express-async-handler';
 // @desc    Get user's cart
 // @route   GET /api/cart
 // @access  Private
-export const getCart = asyncHandler(async (req: Request, res: Response) => {
+export const getCart = asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!req.user) {
     throw new AppError('User not found', 404);
   }
@@ -21,7 +26,7 @@ export const getCart = asyncHandler(async (req: Request, res: Response) => {
       user: req.user._id,
       items: []
     });
-    return res.json(newCart);
+    res.json(newCart);
   }
 
   res.json(cart);
@@ -30,7 +35,7 @@ export const getCart = asyncHandler(async (req: Request, res: Response) => {
 // @desc    Add item to cart
 // @route   POST /api/cart/add
 // @access  Private
-export const addToCart = asyncHandler(async (req: Request, res: Response) => {
+export const addToCart = asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!req.user) {
     throw new AppError('User not found', 404);
   }
@@ -78,7 +83,7 @@ export const addToCart = asyncHandler(async (req: Request, res: Response) => {
 // @desc    Update cart item quantity
 // @route   PUT /api/cart/update
 // @access  Private
-export const updateCartItem = asyncHandler(async (req: Request, res: Response) => {
+export const updateCartItem = asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!req.user) {
     throw new AppError('User not found', 404);
   }
@@ -117,7 +122,7 @@ export const updateCartItem = asyncHandler(async (req: Request, res: Response) =
 // @desc    Remove item from cart
 // @route   DELETE /api/cart/remove/:productId
 // @access  Private
-export const removeFromCart = asyncHandler(async (req: Request, res: Response) => {
+export const removeFromCart = asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!req.user) {
     throw new AppError('User not found', 404);
   }

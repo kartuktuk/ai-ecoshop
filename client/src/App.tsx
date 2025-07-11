@@ -24,6 +24,8 @@ export const App = () => {
             <Navbar />
             <main className="container mx-auto px-4 py-8">
               <Routes>
+                {/* Redirect root to products page */}
+                <Route path="/" element={<Navigate to="/products" replace />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/products" element={<Products />} />
@@ -51,7 +53,6 @@ export const App = () => {
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/" element={<Navigate to="/products" replace />} />
               </Routes>
             </main>
           </div>

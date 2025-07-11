@@ -25,12 +25,12 @@ router.post('/', protect, asyncHandler(async (req: any, res) => {
     throw new Error('No order items');
   }
 
-  // Calculate total carbon footprint
-  let totalCarbonFootprint = 0;
+  // Calculate total carbon impact
+  let totalCarbon = 0;
   for (const item of orderItems) {
     const product = await Product.findById(item.product);
     if (product) {
-      totalCarbonFootprint += product.carbonFootprint * item.quantity;
+      totalCarbon += product.carbonImpact * item.quantity;
     }
   }
 
@@ -42,7 +42,7 @@ router.post('/', protect, asyncHandler(async (req: any, res) => {
     itemsPrice,
     shippingPrice,
     totalPrice,
-    totalCarbonFootprint,
+    totalCarbon,
   });
 
   const createdOrder = await order.save();

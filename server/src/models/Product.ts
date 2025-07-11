@@ -1,77 +1,73 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IProduct extends mongoose.Document {
+export interface IProduct extends Document {
   name: string;
   description: string;
   price: number;
-  image: string;
   category: string;
-  brand: string;
-  countInStock: number;
-  rating: number;
-  numReviews: number;
-  carbonFootprint: number;
+  carbonImpact: number;
   sustainabilityScore: number;
-  materials: string[];
+  imageUrl: string;
+  blockchainHash: string;
+  inStock: boolean;
 }
 
-const productSchema = new mongoose.Schema({
+const productSchema = new Schema({
   name: {
     type: String,
-    required: true,
+    required: [true, 'Product name is required'],
+    trim: true
   },
   description: {
     type: String,
-    required: true,
+    required: [true, 'Product description is required']
   },
   price: {
     type: Number,
-    required: true,
-    default: 0,
-  },
-  image: {
-    type: String,
-    required: true,
+    required: [true, 'Price is required'],
+    min: [0, 'Price cannot be negative']
   },
   category: {
     type: String,
-    required: true,
+    required: [true, 'Category is required'],
+    enum: ['clothing', 'food', 'home', 'beauty', 'electronics']
   },
-  brand: {
-    type: String,
-    required: true,
-  },
-  countInStock: {
+  carbonImpact: {
     type: Number,
-    required: true,
-    default: 0,
-  },
-  rating: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
-  numReviews: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
-  carbonFootprint: {
-    type: Number,
-    required: true,
-    default: 0,
+    required: [true, 'Carbon impact score is required'],
+    min: 0
   },
   sustainabilityScore: {
     type: Number,
-    required: true,
-    default: 0,
+    required: [true, 'Sustainability score is required'],
+    min: 0,
+    max: 100
   },
-  materials: [{
+  imageUrl: {
+    type: String,
+    required: [true, 'Product image URL is required']
+  },
+  blockchainHash: {
     type: String,
     required: true,
-  }],
+    unique: true
+  },
+  inStock: {
+    type: Boolean,
+    default: true
+  }
 }, {
   timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
+});
+
+// Index for searching
+productSchema.index({ name: 'text', description: 'text' });
+
+// Virtual for calculating eco-score
+productSchema.virtual('ecoScore').get(function() {
+  return Math.round((this.sustainabilityScore - this.carbonImpact) * 10) / 10;
 });
 
 export const Product = mongoose.model<IProduct>('Product', productSchema);

@@ -1,26 +1,72 @@
-import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { User } from '../models/User';
+import jwt, { SignOptions } from 'jsonwebtoken';
+import { AppError } from './errorHandler';
+import { User, IUser } from '../models/User';
 
-interface AuthRequest extends Request {
-  user?: any;
+interface JwtPayload {
+  id: string;
+  role: string;
 }
 
-export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  let token;
-
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as jwt.JwtPayload;
-      req.user = await User.findById(decoded.id).select('-password');
-      next();
-    } catch (error) {
-      res.status(401).json({ message: 'Not authorized, token failed' });
+declare global {
+  namespace Express {
+    interface Request {
+      user?: IUser;
     }
   }
+}
 
-  if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '30d';
+
+export const generateToken = (user: IUser): string => {
+  const options = {
+    expiresIn: JWT_EXPIRES_IN as jwt.SignOptions['expiresIn']
+  };
+  
+  return jwt.sign(
+    { id: user._id, role: user.role },
+    JWT_SECRET,
+    options
+  );
+};
+
+export const protect = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    let token;
+
+    if (req.headers.authorization?.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+
+    if (!token) {
+      return next(new AppError('Not authorized to access this route', 401));
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return next(new AppError('User not found', 404));
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    next(new AppError('Not authorized to access this route', 401));
   }
+};
+
+export const authorize = (...roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return next(new AppError('Not authorized to access this route', 401));
+    }
+
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('Not authorized to access this route', 403));
+    }
+
+    next();
+  };
 };

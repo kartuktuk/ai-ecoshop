@@ -1,42 +1,41 @@
-import mongoose from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
+import { IUser } from './User';
 import { IProduct } from './Product';
 
-export interface ICartItem {
+interface ICartItem {
   product: IProduct['_id'];
   quantity: number;
 }
 
-export interface ICart extends mongoose.Document {
-  user: mongoose.Types.ObjectId;
+export interface ICart extends Document {
+  user: IUser['_id'];
   items: ICartItem[];
-  totalAmount: number;
 }
 
-const cartSchema = new mongoose.Schema({
+const cartSchema = new Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    type: Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
+    unique: true
   },
   items: [{
     product: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
+      type: Schema.Types.ObjectId,
       ref: 'Product',
+      required: true
     },
     quantity: {
       type: Number,
       required: true,
-      default: 1,
-    },
-  }],
-  totalAmount: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
+      min: [1, 'Quantity must be at least 1']
+    }
+  }]
 }, {
-  timestamps: true,
+  timestamps: true
 });
+
+// Index for quick lookup by user
+cartSchema.index({ user: 1 });
 
 export const Cart = mongoose.model<ICart>('Cart', cartSchema);
