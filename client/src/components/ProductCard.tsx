@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
-import { LeafIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
+import { GlobeAltIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 
 interface ProductCardProps {
@@ -76,7 +76,7 @@ export const ProductCard = ({ product, showActions = true }: ProductCardProps) =
               getSustainabilityColor(product.sustainabilityScore)
             )}
           >
-            <LeafIcon className="mr-1 h-3 w-3" />
+            <GlobeAltIcon className="mr-1 h-3 w-3" />
             {product.sustainabilityScore}
           </span>
           <span className="text-xs text-gray-500">

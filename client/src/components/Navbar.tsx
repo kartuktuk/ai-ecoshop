@@ -1,13 +1,7 @@
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import {
-  Bars3Icon,
-  XMarkIcon,
-  ShoppingCartIcon,
-  UserIcon,
-  LeafIcon,
-} from '@heroicons/react/24/outline';
+import { Bars3Icon, XMarkIcon, ShoppingCartIcon, UserIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
@@ -30,7 +24,7 @@ export const Navbar = () => {
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
                   <Link to="/" className="text-xl font-bold text-indigo-600 flex items-center">
-                    <LeafIcon className="h-8 w-8 mr-2" />
+                    <GlobeAltIcon className="h-8 w-8 mr-2" />
                     AI-EcoShop
                   </Link>
                 </div>
