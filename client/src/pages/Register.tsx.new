@@ -8,7 +8,8 @@ import {
   UserCircleIcon,
   EnvelopeIcon,
   KeyIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  LeafIcon
 } from '@heroicons/react/24/outline';
 
 interface RegisterFormData {

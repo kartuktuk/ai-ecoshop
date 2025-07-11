@@ -43,7 +43,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-axios.defaults.baseURL = '/api';
+axios.defaults.baseURL = 'http://localhost:5000/api';
   // Update axios headers when user changes
   if (user?.token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;

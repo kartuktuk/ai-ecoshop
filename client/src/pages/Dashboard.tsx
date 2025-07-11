@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useFootprint } from '../hooks/useFootprint';
-import { LeafIcon, TrophyIcon } from '@heroicons/react/24/outline';
+import { GlobeAltIcon, TrophyIcon } from '@heroicons/react/24/outline';
 
 interface Order {
   _id: string;
@@ -63,7 +63,7 @@ export const Dashboard = () => {
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <LeafIcon className="h-6 w-6 text-green-600" />
+                  <GlobeAltIcon className="h-6 w-6 text-green-600" />
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
